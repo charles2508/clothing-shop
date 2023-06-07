@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from 'firebase/auth';
 import {getFirestore , doc, getDoc, setDoc} from 'firebase/firestore';
 
 // Get firebase configuration object the references to the Firebase console.
@@ -18,19 +18,26 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig); //initializeApp is an SDK that provides a list of libraries that could be used (e.g., authentication, CRUD, etc)
 
 // Set up authentication
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
-provider.setCustomParameters({
+googleProvider.setCustomParameters({
     prompt: "select_account"
 });
 
 export const auth = getAuth(); // singleton object
-export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
+export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
+export const createUserAuthFromEmailAndPassword = async (email, password) => {
+    if (!email || !password) return;
+    return await createUserWithEmailAndPassword(auth, email, password);
+}
 
 // Set up firestore database instance
 export const database = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (userAuth, additionalInfo = {}) => {
+    if (!userAuth) return;
+
     const userDocReference = doc(database, "users", userAuth.uid);
     const userSnapshot = await getDoc(userDocReference);
     if (!userSnapshot.exists()) {
@@ -40,7 +47,8 @@ export const createUserDocumentFromAuth = async (userAuth) => {
             await setDoc(userDocReference, {
                 displayName,
                 email,
-                createdAt
+                createdAt,
+                ...additionalInfo
             });
         }
         catch (error) {
