@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import {getFirestore , doc, getDoc, setDoc} from 'firebase/firestore';
 
 // Get firebase configuration object the references to the Firebase console.
@@ -30,6 +30,10 @@ export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googlePro
 export const createUserAuthFromEmailAndPassword = async (email, password) => {
     if (!email || !password) return;
     return await createUserWithEmailAndPassword(auth, email, password);
+}
+export const signInWithEmailAndPasswordFromApi = async (email, password) => {
+    if (!email || !password) return;
+    return await signInWithEmailAndPassword(auth, email, password);
 }
 
 // Set up firestore database instance
