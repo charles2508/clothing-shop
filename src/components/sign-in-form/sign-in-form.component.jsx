@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { signInWithEmailAndPasswordFromApi, createUserDocumentFromAuth, signInWithGooglePopup } from "../../utils/firebase/firebase.utils";
 import FormInput from "../form-input/form-input.component";
 import './sign-in-form.styles.scss';
@@ -12,6 +12,7 @@ const defaultFormFields = {
 const SignInForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { email, password} = formFields;
+    //console.log(context);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -25,8 +26,7 @@ const SignInForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await signInWithEmailAndPasswordFromApi(email, password); //return user credential but without displayName field
-            console.log(response);
+            const { user } = await signInWithEmailAndPasswordFromApi(email, password); //return user credential but without displayName field
             resetFormFields();
         } 
         catch (error) {
@@ -44,8 +44,7 @@ const SignInForm = () => {
     }
 
     const signInWithGoogle = async () => {
-        const { user } = await signInWithGooglePopup();
-        await createUserDocumentFromAuth(user);
+        await signInWithGooglePopup();
     }
 
     return(

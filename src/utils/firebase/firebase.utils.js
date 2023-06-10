@@ -1,5 +1,14 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+    getAuth,
+    signInWithRedirect,
+    signInWithPopup,
+    GoogleAuthProvider,
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+} from 'firebase/auth';
 import {getFirestore , doc, getDoc, setDoc} from 'firebase/firestore';
 
 // Get firebase configuration object the references to the Firebase console.
@@ -35,6 +44,7 @@ export const signInWithEmailAndPasswordFromApi = async (email, password) => {
     if (!email || !password) return;
     return await signInWithEmailAndPassword(auth, email, password);
 }
+export const SignOutFromAccount = () => signOut(auth);
 
 // Set up firestore database instance
 export const database = getFirestore();
@@ -62,3 +72,5 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInfo = {}) 
     return userDocReference;
 }
 
+// Observer pattern:
+export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback);
