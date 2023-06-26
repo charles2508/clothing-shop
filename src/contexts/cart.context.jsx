@@ -1,4 +1,5 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useReducer } from "react";
+import { createAction } from "../utils/reducer/reducer.utils";
 
 
 const addCartItem = (cartItems, productToAdd) => {
@@ -37,6 +38,38 @@ const removeProductFromCart = (cartItems, productToDelete) => {
     return cartItems.filter((item) => item.id !== productToDelete.id);
 }
 
+const CART_ACTION_TYPES = {
+    SET_CART_ITEMS: 'SET_CART_ITEMS',
+    SET_IS_CART_OPEN: 'SET_IS_CART_OPEN'
+}
+
+const INITIAL_STATE = {
+    isCartOpen: false,
+    cartItems: [],
+    totalPrice: 0,
+    cartCount: 0
+}
+
+const cartReducer = (state, action) => {
+    const { type, payload } = action;
+
+    switch(type) {
+        case CART_ACTION_TYPES.SET_CART_ITEMS:
+            return {
+                ...state,
+                ...payload 
+            }
+        case CART_ACTION_TYPES.SET_IS_CART_OPEN:
+            {
+                return {
+                    ...state,
+                    isCartOpen: !state.isCartOpen
+                }
+            }
+        default:
+            throw new Error(`unhandled type of ${type} in cartReducer`);
+    }
+}
 
 export const CartContext = createContext({
     isCartOpen: false,
@@ -45,29 +78,40 @@ export const CartContext = createContext({
     addItemToCart: () => null,
     removeItemFromCart: () => null,
     removeWholeProductFromCart: () => null,
-    totalPrice: 0
+    totalPrice: 0,
+    cartCount: 0
 });
 
 export const CartProvider = ({ children }) => {
-    const [isCartOpen, setIsCartOpen] = useState(false);
-    const [cartItems, setCartItems] = useState([]);
-    const [totalPrice, setTotalPrice] = useState(0);
+    // const [isCartOpen, setIsCartOpen] = useState(false);
+    // const [cartItems, setCartItems] = useState([]);
+    // const [totalPrice, setTotalPrice] = useState(0);
+    
+    const [state, dispatchCart] = useReducer(cartReducer, INITIAL_STATE);
+    const { isCartOpen, cartItems, cartCount, totalPrice } = state;
 
-    useEffect(() => {
-        const totalPrice = cartItems.reduce((currentPrice, currentCartItem) => currentPrice + currentCartItem.price * currentCartItem.quantity, 0);
-        setTotalPrice(totalPrice);
-    }, [cartItems])
+    // useEffect(() => {
+    //     const totalPrice = cartItems.reduce((currentPrice, currentCartItem) => currentPrice + currentCartItem.price * currentCartItem.quantity, 0);
+    //     setTotalPrice(totalPrice);
+    // }, [cartItems])
 
     const addItemToCart = (productToAdd) => { 
-        setCartItems(addCartItem(cartItems, productToAdd));
+        const newCartItems = addCartItem(cartItems, productToAdd);
+        updateCartItemsReducer(newCartItems);
     }
 
     const removeItemFromCart = (cartItemToRemove) => {
-        setCartItems(removeCartItem(cartItems, cartItemToRemove))
+        const newCartItems = removeCartItem(cartItems, cartItemToRemove);
+        updateCartItemsReducer(newCartItems);
     }
     
     const removeWholeProductFromCart = (productToDelete) => {
-        setCartItems(removeProductFromCart(cartItems, productToDelete));
+        const newCartItems = removeProductFromCart(cartItems, productToDelete);
+        updateCartItemsReducer(newCartItems)
+    }
+
+    const setIsCartOpen = () => {
+        dispatchCart(createAction(CART_ACTION_TYPES.SET_IS_CART_OPEN))
     }
 
     const value = {
@@ -77,7 +121,14 @@ export const CartProvider = ({ children }) => {
         addItemToCart,
         removeItemFromCart,
         removeWholeProductFromCart,
-        totalPrice
+        totalPrice,
+        cartCount
+    }
+
+    const updateCartItemsReducer = (cartItems) => {
+        const cartCount = cartItems.reduce((currentTotal, currentCartItem) => currentTotal + currentCartItem.quantity, 0);
+        const totalPrice = cartItems.reduce((currentPrice, currentCartItem) => currentPrice + currentCartItem.price * currentCartItem.quantity, 0);
+        dispatchCart(createAction(CART_ACTION_TYPES.SET_CART_ITEMS, {cartCount: cartCount, totalPrice: totalPrice, cartItems: cartItems}))
     }
 
     return(
