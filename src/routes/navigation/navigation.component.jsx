@@ -1,18 +1,20 @@
 import { Outlet, Link } from "react-router-dom";
 import { Fragment, useContext } from "react";
 import {ReactComponent as CrwnLogo} from '../../assets/crown.svg'
-import { UserContext } from "../../contexts/user.context";
-import { CartContext } from "../../contexts/cart.context";
+import { selectCurrentUser } from "../../store/user/user.selector";
+//import { CartContext } from "../../contexts/cart.context";
 import { SignOutFromAccount } from "../../utils/firebase/firebase.utils";
 import CartIcon from "../../components/cart-icon/cart-icon.component";
 import './navigation.styles.jsx'
 import CartDropDown from "../../components/cart-dropdown/cart-dropdown.component";
-
+import { useSelector } from 'react-redux';
+import { selectIsCartOpen } from "../../store/cart/cart.selector";
 import { NavigationContainer, NavLinks, NavLink, LogoContainer } from "./navigation.styles";
 
 const Navigation = () => {
-    const currentUser = useContext(UserContext);
-    const { isCartOpen } = useContext(CartContext);
+    const currentUser = useSelector((state) => selectCurrentUser(state));
+    //const { isCartOpen } = useContext(CartContext);
+    const isCartOpen = useSelector((state) => selectIsCartOpen(state))
 
     const handleSignOut = async () => {
         await SignOutFromAccount();

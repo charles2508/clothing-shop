@@ -21,6 +21,7 @@ export const CategoriesContextProvider = ({ children }) => {
         };
         getCategoriesMap();
     }, [])
+    
     const value = { categoriesMap }
     
     return(

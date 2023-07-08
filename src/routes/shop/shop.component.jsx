@@ -2,8 +2,23 @@ import CategoriesPreview from '../categories-preview/categories-preview.componen
 import Category from '../category/category.component';
 import { Routes, Route } from 'react-router-dom';
 import './shop.styles.scss';
+import { createCategoryAction } from '../../store/categories/category.action';
+import { getCategoriesAndDocuments } from '../../utils/firebase/firebase.utils';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 const Shop = () => {
+    const dispatch = useDispatch();
+    // Dispatch to Categories Reducer
+    useEffect(() => {
+        const getCategoriesMap = async () => {
+            const categoriesArray = await getCategoriesAndDocuments();
+            //console.log(categoriesMap);
+            dispatch(createCategoryAction(categoriesArray));
+        };
+        getCategoriesMap();
+    }, [])
+
     return(
         <Routes>
             <Route index element={<CategoriesPreview/>}/>
