@@ -33,8 +33,8 @@ const Checkout = () => {
                 cartItems.map((cartItem) => {
             
                     return(
-                        <div>
-                            <CheckoutItem key={cartItem.id} cartItem={cartItem}/>
+                        <div key={cartItem.id}>
+                            <CheckoutItem cartItem={cartItem}/>
                         </div>
                     )
                 })

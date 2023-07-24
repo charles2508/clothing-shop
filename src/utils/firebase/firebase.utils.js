@@ -78,7 +78,7 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInfo = {}) 
             console.log('error creating the user ', error.message);
         }
     }
-    return userDocReference;
+    return userSnapshot;
 }
 
 export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
@@ -95,6 +95,7 @@ export const getCategoriesAndDocuments = async () => {
     const collectionRef = collection(database, 'categories');
     const q = query(collectionRef);
     const querySnapshot = await getDocs(q);
+    
     // const categoryMap = querySnapshot.docs.reduce((accumulator, docSnapShot) => {
     //     const { title, items } = docSnapShot.data();
     //     accumulator[title.toLowerCase()] = items;
@@ -105,3 +106,17 @@ export const getCategoriesAndDocuments = async () => {
 
 // Observer pattern:
 export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback);
+
+export const getCurrentUser = () => {
+    return new Promise((resolve, reject) => {
+        const unsubcribe = onAuthStateChanged(
+                auth,
+                (userAuth) => {
+                    unsubcribe();
+                    resolve(userAuth);
+                },
+                reject
+            )
+        }
+    )
+}

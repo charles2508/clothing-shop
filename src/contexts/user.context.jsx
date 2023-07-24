@@ -32,15 +32,15 @@ export const UserProvider = ({ children }) => {
     }
 
     const value = state.currentUser;
-    useEffect(() => {
-        const unsubcribe = onAuthStateChangedListener((user) => {
-            if (user) {
-                createUserDocumentFromAuth(user);
-            }
-            setCurrentUser(user);
-        });
-        return unsubcribe;
-    }, [])
+    // useEffect(() => {
+    //     const unsubcribe = onAuthStateChangedListener((user) => {
+    //         if (user) {
+    //             createUserDocumentFromAuth(user);
+    //         }
+    //         setCurrentUser(user);
+    //     });
+    //     return unsubcribe;
+    // }, [])
 
     return(
         <UserContext.Provider value={value}>{children}</UserContext.Provider>

@@ -10,14 +10,17 @@ import CartDropDown from "../../components/cart-dropdown/cart-dropdown.component
 import { useSelector } from 'react-redux';
 import { selectIsCartOpen } from "../../store/cart/cart.selector";
 import { NavigationContainer, NavLinks, NavLink, LogoContainer } from "./navigation.styles";
+import { useDispatch } from "react-redux";
+import { createSignOutStartAction } from "../../store/user/user.action";
 
 const Navigation = () => {
     const currentUser = useSelector((state) => selectCurrentUser(state));
     //const { isCartOpen } = useContext(CartContext);
-    const isCartOpen = useSelector((state) => selectIsCartOpen(state))
+    const isCartOpen = useSelector((state) => selectIsCartOpen(state));
+    const dispatch = useDispatch();
 
-    const handleSignOut = async () => {
-        await SignOutFromAccount();
+    const handleSignOut = () => {
+        dispatch(createSignOutStartAction());
     }
 
     return(
