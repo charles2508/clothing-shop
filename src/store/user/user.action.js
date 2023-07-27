@@ -9,7 +9,7 @@ export const createSignUpStartAction = (email, password, displayName) => createA
 
 export const createGoogleSignInStartAction = () => createAction(USER_ACTION_TYPES.GOOGLE_SIGN_IN_START);
 
-export const createEmailSignInStartAction = (email, password) => createAction(USER_ACTION_TYPES.EMAIL_SIGN_IN_START, { email, password });
+export const   createEmailSignInStartAction = (email, password) => createAction(USER_ACTION_TYPES.EMAIL_SIGN_IN_START, { email, password });
 
 export const createSignOutSuccessAction = () => createAction(USER_ACTION_TYPES.SIGN_OUT_SUCCESS);
 

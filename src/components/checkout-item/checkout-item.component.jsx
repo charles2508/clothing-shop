@@ -11,7 +11,7 @@ const CheckoutItem = ({cartItem}) => {
     //const { addItemToCart, removeItemFromCart, removeWholeProductFromCart } = useContext(CartContext);
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => selectCartItems(state));
-
+  
     const removeProductHandler = () => {
         dispatch(removeWholeProductFromCart(cartItems, cartItem));
     }
