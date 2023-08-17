@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, FormEvent, ChangeEvent } from "react";
 import { signInWithEmailAndPasswordFromApi, signInWithGooglePopup } from "../../utils/firebase/firebase.utils";
 import { useDispatch } from "react-redux";
 import FormInput from "../form-input/form-input.component";
@@ -18,7 +18,7 @@ const SignInForm = () => {
     const { email, password} = formFields;
     //console.log(context);
 
-    const handleChange = (event) => {
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         setFormFields({ ...formFields, [name]: value })
     }
@@ -27,7 +27,7 @@ const SignInForm = () => {
         setFormFields(defaultFormFields);
     }
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
             dispatch(createEmailSignInStartAction(email, password));

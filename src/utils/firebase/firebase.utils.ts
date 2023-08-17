@@ -7,7 +7,9 @@ import {
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    User,
+    NextOrObserver
 } from 'firebase/auth';
 import {
     getFirestore, 
@@ -17,8 +19,10 @@ import {
     collection,
     writeBatch,
     query,
-    getDocs
+    getDocs,
+    QueryDocumentSnapshot
 } from 'firebase/firestore';
+import { Category } from '../../store/categories/category.types';
 
 // Get firebase configuration object the references to the Firebase console.
 const firebaseConfig = {
@@ -45,11 +49,11 @@ googleProvider.setCustomParameters({
 export const auth = getAuth(); // singleton object
 export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
 export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
-export const createUserAuthFromEmailAndPassword = async (email, password) => {
+export const createUserAuthFromEmailAndPassword = async (email: string, password: string) => {
     if (!email || !password) return;
     return await createUserWithEmailAndPassword(auth, email, password);
 }
-export const signInWithEmailAndPasswordFromApi = async (email, password) => {
+export const signInWithEmailAndPasswordFromApi = async (email: string, password: string) => {
     if (!email || !password) return;
     return await signInWithEmailAndPassword(auth, email, password);
 }
@@ -58,7 +62,18 @@ export const SignOutFromAccount = () => signOut(auth);
 // Set up firestore database instance
 export const database = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth, additionalInfo = {}) => {
+
+export type AdditionalInfo = {
+    displayName?: string;
+}
+
+export type UserData = {
+    displayName: string;
+    email: string;
+    createdAt: Date;
+}
+
+export const createUserDocumentFromAuth = async (userAuth: User, additionalInfo = {} as AdditionalInfo): Promise<void | QueryDocumentSnapshot<UserData>> => {
     if (!userAuth) return;
 
     const userDocReference = doc(database, "users", userAuth.uid);
@@ -75,13 +90,17 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInfo = {}) 
             });
         }
         catch (error) {
-            console.log('error creating the user ', error.message);
+            console.log('error creating the user ', error);
         }
     }
-    return userSnapshot;
+    return userSnapshot as QueryDocumentSnapshot<UserData>;
 }
 
-export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+export type ObjectToAdd = {
+    title: string
+}
+
+export const addCollectionAndDocuments = async <T extends ObjectToAdd>(collectionKey: string, objectsToAdd: T[]): Promise<void> => {
     const collectionRef = collection(database, collectionKey);
     const batch = writeBatch(database);
     objectsToAdd.forEach((object) => {
@@ -91,7 +110,7 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
     await batch.commit();
 }
 
-export const getCategoriesAndDocuments = async () => {
+export const getCategoriesAndDocuments = async (): Promise<Category[]> => {
     const collectionRef = collection(database, 'categories');
     const q = query(collectionRef);
     const querySnapshot = await getDocs(q);
@@ -101,13 +120,13 @@ export const getCategoriesAndDocuments = async () => {
     //     accumulator[title.toLowerCase()] = items;
     //     return accumulator;
     // }, {});
-    return querySnapshot.docs.map(docSnapshot => docSnapshot.data());
+    return querySnapshot.docs.map(docSnapshot => docSnapshot.data() as Category);
 }
 
 // Observer pattern:
-export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback);
+export const onAuthStateChangedListener = (callback: NextOrObserver<User>) => onAuthStateChanged(auth, callback);
 
-export const getCurrentUser = () => {
+export const getCurrentUser = (): Promise<User | null> => {
     return new Promise((resolve, reject) => {
         const unsubcribe = onAuthStateChanged(
                 auth,

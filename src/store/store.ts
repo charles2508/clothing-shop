@@ -5,8 +5,11 @@ import logger from 'redux-logger';
 //import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
 import { rootSaga } from './root-saga';
+import { PersistConfig } from 'redux-persist';
 
 import { rootReducer } from './root-reducer';
+
+export type RootState = ReturnType<typeof rootReducer>;
 
 // const loggerMiddleware = (store) => (next) => (action) => {
 //     if (!action.type) {
@@ -26,7 +29,10 @@ const sagaMiddleware = createSagaMiddleware();
 const middleWares = [logger, sagaMiddleware];             
 const composedEnhancers = compose(applyMiddleware(...middleWares));
 
-const persistConfig = {
+type ExtendedPersistConfig = PersistConfig<RootState> & {
+    whitelist: (keyof RootState)[];
+} 
+const persistConfig: ExtendedPersistConfig = {
     key: 'root',
     storage: storage,
     whitelist: ['cart']

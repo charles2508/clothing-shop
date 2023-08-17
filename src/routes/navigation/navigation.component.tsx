@@ -5,18 +5,19 @@ import { selectCurrentUser } from "../../store/user/user.selector";
 //import { CartContext } from "../../contexts/cart.context";
 import { SignOutFromAccount } from "../../utils/firebase/firebase.utils";
 import CartIcon from "../../components/cart-icon/cart-icon.component";
-import './navigation.styles.jsx'
+import './navigation.styles'
 import CartDropDown from "../../components/cart-dropdown/cart-dropdown.component";
 import { useSelector } from 'react-redux';
 import { selectIsCartOpen } from "../../store/cart/cart.selector";
 import { NavigationContainer, NavLinks, NavLink, LogoContainer } from "./navigation.styles";
 import { useDispatch } from "react-redux";
 import { createSignOutStartAction } from "../../store/user/user.action";
+import { RootState } from "../../store/store";
 
 const Navigation = () => {
-    const currentUser = useSelector((state) => selectCurrentUser(state));
+    const currentUser = useSelector((state: RootState) => selectCurrentUser(state));
     //const { isCartOpen } = useContext(CartContext);
-    const isCartOpen = useSelector((state) => selectIsCartOpen(state));
+    const isCartOpen = useSelector((state: RootState) => selectIsCartOpen(state));
     const dispatch = useDispatch();
 
     const handleSignOut = () => {
@@ -35,7 +36,7 @@ const Navigation = () => {
                     </NavLink>
                     {
                         currentUser ? (
-                            <NavLink className="nav-link" onClick={handleSignOut}>SIGN OUT</NavLink>
+                            <NavLink as='span' onClick={handleSignOut}>SIGN OUT</NavLink>
                         ) : (
                         <NavLink className="nav-link" to='/auth'>
                             SIGN IN
