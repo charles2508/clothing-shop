@@ -5,12 +5,20 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { addItemToCart, removeWholeProductFromCart, removeItemFromCart} from '../../store/cart/cart.action';
 import { selectCartItems } from '../../store/cart/cart.selector';
+import { FC, memo } from 'react';
+import { CartItemType } from '../../store/cart/cart.types';
+import { RootState } from '../../store/store';
 
-const CheckoutItem = ({cartItem}) => {
+type CheckoutItemProps = {
+    cartItem: CartItemType
+}
+
+// Additional feature of Memo. See CartItem component for reference
+const CheckoutItem: FC<CheckoutItemProps> = memo(({cartItem}) => {
     const { name, imageUrl, price, quantity } = cartItem;
     //const { addItemToCart, removeItemFromCart, removeWholeProductFromCart } = useContext(CartContext);
     const dispatch = useDispatch();
-    const cartItems = useSelector((state) => selectCartItems(state));
+    const cartItems = useSelector((state: RootState) => selectCartItems(state));
   
     const removeProductHandler = () => {
         dispatch(removeWholeProductFromCart(cartItems, cartItem));
@@ -39,6 +47,6 @@ const CheckoutItem = ({cartItem}) => {
             <div className='remove-button' onClick={removeProductHandler}>&#10005;</div>
         </div>
     )
-}
+})
 
 export default CheckoutItem;

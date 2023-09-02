@@ -65,4 +65,11 @@ export const DirectoryItemContainer = styled.div`
   &:last-child {
     margin-left: 7.5px;
   }
+
+  // media query: Here we target at the "screen" 
+  // It means that whenever screen reaches its limit, apply these following css rules
+  // In this case, if the screen max-width size <= 800px, apply rules:
+  @media screen and (max-width: 800px) {
+    height: 200px;
+  }
 `

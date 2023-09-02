@@ -1,6 +1,14 @@
+import { CartItemType } from '../../store/cart/cart.types';
 import './cart-item.styles.scss'
+import { FC, memo } from 'react';
 
-const CartItem = ({ cartItem }) => {
+type CartItemProps = {
+    cartItem: CartItemType
+}
+
+// Additional feature for React's memo:
+// Only when { cartItem } changes, the Component will be rerendered.
+const CartItem: FC<CartItemProps> = memo(({ cartItem }) => {
     const { name, imageUrl, price, quantity } = cartItem;
 
     return(
@@ -12,6 +20,6 @@ const CartItem = ({ cartItem }) => {
             </div>
         </div>
     )
-}
+})
 
 export default CartItem;
