@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { CategoriesContext } from '../../contexts/categories.context';
 import ProductCard from '../../components/product-card/product-card.component';
 import { Fragment } from 'react';
-import { useSelector } from 'react-redux/es/hooks/useSelector';
+import { useSelector } from 'react-redux';
 import { selectCategoriesMap, selectCategoriesIsLoading } from '../../store/categories/category.selector';
 import Spinner from '../../components/spinner/spinner.component';
 import { RootState } from '../../store/store';

@@ -7,7 +7,7 @@ const selectCategoryReducer = (state: RootState): CategoriesState => {
     return state.categories;
 }
 
-const selectCategoriesArray = createSelector(
+export const selectCategoriesArray = createSelector(
     [selectCategoryReducer],
     (categoriesSlice) => {
         return categoriesSlice.categoriesArray;
